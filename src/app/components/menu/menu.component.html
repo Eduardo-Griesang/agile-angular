@@ -1,0 +1,21 @@
+<form [formGroup]="menuForm" (ngSubmit)="onSubmit()">
+    <label for="category1">Category 1:</label>
+    <select formControlName="category1" id="category1">
+      <option value="" disabled>Select Category 1</option>
+      <option *ngFor="let option of category1Options" [value]="option">{{ option }}</option>
+    </select>
+  
+    <label for="category2">Category 2:</label>
+    <select formControlName="category2" id="category2">
+      <option value="" disabled>Select Category 2</option>
+      <option *ngFor="let option of category2Options" [value]="option">{{ option }}</option>
+    </select>
+  
+    <label for="category3">Category 3:</label>
+    <select formControlName="category3" id="category3">
+      <option value="" disabled>Select Category 3</option>
+      <option *ngFor="let option of category3Options" [value]="option">{{ option }}</option>
+    </select>
+  
+    <button type="submit" [disabled]="!menuForm.valid">Submit</button>
+</form>
