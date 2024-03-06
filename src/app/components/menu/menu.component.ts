@@ -5,50 +5,54 @@ import { DataService } from 'src/app/services/data.service';
 @Component({
   selector: 'app-menu',
   templateUrl: './menu.component.html',
-  styleUrls: ['./menu.component.css'],
-  providers: [DataService] // Provide the data service
+  styleUrls: ['./menu.component.scss'],
+  providers: [DataService]
 })
 export class MenuComponent implements OnInit {
   menuForm!: FormGroup;
-  category1Options!: string[];
-  category2Options!: string[];
-  category3Options!: string[];
+  categories!: string[];
+  products!: string[];
+  brands!: string[];
+
+  selectedCategory: string | undefined;
+  selectedProduct: string | undefined;
+  selectedBrand: string | undefined;
 
   constructor(private fb: FormBuilder, private dataService: DataService) {
     this.menuForm = this.fb.group({
-      category1: '',
-      category2: '',
-      category3: ''
+      category: '',
+      product: '',
+      brand: ''
     });
   }
 
   ngOnInit(): void {
     this.dataService.getCategories(1).subscribe(categories => {
-      this.category1Options = categories;
+      this.categories = categories;
     });
 
-    this.menuForm.get('category1')!.valueChanges.subscribe(value => {
-      if (value) {
-        this.dataService.getCategories(2, value).subscribe(categories => {
-          this.category2Options = categories;
+    this.menuForm.get('category')!.valueChanges.subscribe(category => {
+      if (category) {
+        this.selectedCategory = category;
+        this.dataService.getCategories(2, category).subscribe(products => {
+          this.products = products;
+          this.selectedProduct = undefined;
         });
       }
     });
 
-    this.menuForm.get('category2')!.valueChanges.subscribe(value => {
-      const category1Value = this.menuForm.get('category1')!.value;
-      if (value && category1Value) {
-        // Pass both category1Value and value as arguments
-        this.dataService.getCategories(3, category1Value, value).subscribe(categories => {
-          this.category3Options = categories;
+    this.menuForm.get('product')!.valueChanges.subscribe(product => {
+      const selectedCategory = this.menuForm.get('category')!.value;
+      if (product && selectedCategory) {
+        this.selectedProduct = product;
+        this.dataService.getCategories(3, selectedCategory, product).subscribe(brands => {
+          this.brands = brands;
         });
       }
     });
-  }
 
-  onSubmit() {
-    const category3Value = this.menuForm.get('category3')!.value;
-    console.log(`Selected category 3: ${category3Value}`);
-    // Fetch sales data based on the selected category3Value
+    this.menuForm.get('brand')!.valueChanges.subscribe(brand => {
+      this.selectedBrand = brand;
+    });
   }
 }
